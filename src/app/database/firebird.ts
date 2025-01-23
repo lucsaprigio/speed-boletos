@@ -8,7 +8,7 @@ export var dbOptions = {
     password: process.env.NEXT_API_PASSWORD
 };
 
-export var dbXmlBlob = {
+export var dbBlob = {
     host: process.env.NEXT_API_HOST,
     port: 3050,
     database: "/database/Financeiro/financeiro.fdb",
@@ -76,7 +76,7 @@ async function executeQuery(query: string, params: any[]): Promise<any[]> {
 
 async function executeQueryBlob(ssql: string, params: any): Promise<any[]> {
     return new Promise<any[]>((resolve, reject) => {
-        firebird.attach(dbXmlBlob, (err, db) => {
+        firebird.attach(dbBlob, (err, db) => {
             if (err)
 
                 throw err;

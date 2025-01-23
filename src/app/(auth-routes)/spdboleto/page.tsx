@@ -6,35 +6,48 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
-export default function SpdBoleto() {
+export const maxDuration = 30;
+
+async function fetchBoletos(cdCliente: string) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/boletos/${cdCliente}`);
+
+        if (!response.ok) {
+            throw new Error(`Error fetching boletos: ${response.statusText}`);
+        }
+
+        return response.json();
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+export default async function SpdBoleto() {
+
+    const boletos = await fetchBoletos("1");
+    console.log(boletos);
+
     return (
         <main className="min-h-screen mx-auto flex justify-center">
             <div>
-                <h2 className="text-2xl text-black mt-10 font-bold">Boletos Speed</h2>
                 <Table>
-                    <TableCaption>Boletos Speed</TableCaption>
-                    <TableHead>
+                    <TableCaption>Lista de Boletos</TableCaption>
+                    <TableHeader>
                         <TableRow>
-                            <TableHeader>Nome</TableHeader>
-                            <TableHeader>Valor</TableHeader>
-                            <TableHeader>Vencimento</TableHeader>
+                            <TableHead className="w-[100px]">Invoice</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Method</TableHead>
+                            <TableHead className="text-right">Amount</TableHead>
                         </TableRow>
-                    </TableHead>
+                    </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>João</TableCell>
-                            <TableCell>100,00</TableCell>
-                            <TableCell>10/10/2021</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Maria</TableCell>
-                            <TableCell>200,00</TableCell>
-                            <TableCell>10/10/2021</TableCell>
-                        </TableRow>
+
                     </TableBody>
                 </Table>
+
             </div>
         </main>
     )
