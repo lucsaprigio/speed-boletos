@@ -1,6 +1,5 @@
 import { executeQueryBlob } from "@/database/firebird";
 import { NextRequest, NextResponse } from "next/server";
-import fs from 'fs';
 
 export const maxDuration = 20;
 
@@ -32,8 +31,6 @@ export async function GET(req: NextRequest, { params }: { params: { dupl: string
         }
 
         const bufferBoleto = Buffer.from(blob, 'binary');
-
-        fs.writeFileSync('boleto.pdf', bufferBoleto);
 
         const fileName = `${dupl}.pdf`;
 
