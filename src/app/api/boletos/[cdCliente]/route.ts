@@ -5,7 +5,9 @@ import { format } from 'date-fns';
 
 export async function GET(req: NextRequest, { params }: { params: { cdCliente: string } }) {
     try {
-        if (!params.cdCliente) {
+        const { cdCliente } = params;
+
+        if (!cdCliente) {
             return NextResponse.json({ error: 'cdCliente is undefined' });
         }
 
@@ -21,7 +23,7 @@ export async function GET(req: NextRequest, { params }: { params: { cdCliente: s
               SP_RETORNO_SITE_SPEED.sp_valor,
               SP_RETORNO_SITE_SPEED.sp_atrz,
               SP_RETORNO_SITE_SPEED.sp_dias
-            FROM SP_RETORNO_SITE_SPEED('${params.cdCliente}', '${dateFormatted}')
+            FROM SP_RETORNO_SITE_SPEED('${cdCliente}', '${dateFormatted}')
         `, []);
 
         if (!boletos[0]) {

@@ -5,7 +5,7 @@ export const maxDuration = 30;
 
 async function fetchBoletos(cdCliente: string) {
     try {
-        const response = await fetch(`http://localhost:3000/api/boletos/${cdCliente}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API}/boletos/${cdCliente}`);
 
         if (!response.ok) {
             throw new Error(`Error fetching boletos: ${response.statusText}`);
