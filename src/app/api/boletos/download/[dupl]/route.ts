@@ -7,7 +7,9 @@ type DownloadResponse = {
     BOLETO: Buffer;
 }
 
-export async function GET(res: NextResponse, { params }: { params: { dupl: string } }) {
+export async function GET(res: NextResponse, props: { params: Promise<{ dupl: string }> }) {
+    const params = await props.params;
+
     try {
         const { dupl } = params;
 

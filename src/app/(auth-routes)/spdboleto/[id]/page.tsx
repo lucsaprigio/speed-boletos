@@ -18,7 +18,8 @@ async function fetchBoletos(cdCliente: string) {
     }
 }
 
-export default async function SpdBoleto({ params }) {
+export default async function SpdBoleto(props) {
+    const params = await props.params;
 
     const boletos: Duplicatas[] = await fetchBoletos(params.id);
 
