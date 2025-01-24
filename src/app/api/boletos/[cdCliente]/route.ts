@@ -3,7 +3,7 @@ import { executeTransaction } from "../../../../database/firebird";
 
 import { format } from 'date-fns';
 
-export async function GET(req: NextRequest, { params }: { params: { cdCliente: string } }) {
+export async function GET({ params }: { params: { cdCliente: string } }) {
     try {
         const { cdCliente } = params;
 

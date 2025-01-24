@@ -1,5 +1,5 @@
 import { executeQueryBlob } from "@/database/firebird";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const maxDuration = 20;
 
@@ -7,7 +7,7 @@ type DownloadResponse = {
     BOLETO: Buffer;
 }
 
-export async function GET(req: NextRequest, { params }: { params: { dupl: string } }) {
+export async function GET(res: NextResponse, { params }: { params: { dupl: string } }) {
     try {
         const { dupl } = params;
 
