@@ -69,12 +69,13 @@ export function DataTable<TData extends Boletos, TValue>({
         } catch (error) {
             toast({
                 title: 'Erro ao baixar o arquivo',
-                description: 'Arquivo não encontrado',
+                description: 'Tente novamente mais tarde',
                 variant: 'destructive'
             })
             throw new Error(error);
         } finally {
             document.body.style.cursor = 'default';
+            setSelectedDuplicatas([]);
         }
     }
 

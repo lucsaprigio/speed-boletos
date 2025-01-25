@@ -28,7 +28,7 @@ async function handleDownloadDupl(dupl: number) {
         document.body.style.cursor = 'progress';
 
         toast({
-            title: 'Baixando Arquivo XML',
+            title: 'Baixando Arquivo PDF',
             description: 'Aguarde um momento, o download será iniciado em breve',
             action: <ToastAction altText="Fechar">Fechar</ToastAction>,
             variant: 'default'
@@ -84,7 +84,7 @@ const DropdownActions = ({ dupl }) => {
                     className="flex w-full justify-between group"
                     onClick={() => { }}
                 >
-                    <strong className="text-gray-50 group-hover:text-cyan-400">Pix</strong>
+                    <strong className="text-gray-50 group-hover:text-cyan-400">Pix (Em breve)</strong>
                     <PixLogo className="text-gray-50 group-hover:text-cyan-400" size={24} />
                 </DropdownMenuItem>
             </DropdownMenuContent>
