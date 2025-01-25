@@ -42,7 +42,6 @@ export function BoletoTable({ data }: BoletosTableProps) {
             });
 
             if (!response.ok) {
-                console.log(response)
                 throw new Error(`Erro ${response.status}: ${response.statusText}`);
             }
 

@@ -26,7 +26,6 @@ import { FilePdf, PixLogo } from "@phosphor-icons/react"
 async function handleDownloadDupl(dupl: number) {
     try {
         document.body.style.cursor = 'progress';
-        console.log(dupl)
 
         toast({
             title: 'Baixando Arquivo XML',
@@ -40,7 +39,6 @@ async function handleDownloadDupl(dupl: number) {
         });
 
         if (!response.ok) {
-            console.log(response);
             throw new Error(`Erro ${response.status}: ${response.statusText}`);
         }
 
@@ -54,7 +52,6 @@ async function handleDownloadDupl(dupl: number) {
         a.click();
         window.URL.revokeObjectURL(url);
     } catch (error) {
-        console.log(error);
         toast({
             title: 'Erro ao baixar o arquivo',
             description: 'Arquivo não encontrado',

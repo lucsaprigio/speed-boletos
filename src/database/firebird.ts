@@ -21,14 +21,12 @@ async function executeTransaction(ssql: string, params: any): Promise<any> {
         try {
             firebird.attach(dbOptions, (err, db) => {
                 if (err) {
-                    console.log(err);
                     return reject(err);
                 };
 
                 db.transaction(firebird.ISOLATION_READ_COMMITTED, async (err, transaction) => {
                     if (err) {
                         db.detach();
-                        console.log(err);
                         return reject(err);
                     };
 
@@ -36,7 +34,6 @@ async function executeTransaction(ssql: string, params: any): Promise<any> {
                         if (err) {
                             transaction.rollback(() => {
                                 db.detach();
-                                console.log(err);
                                 return reject(err);
                             });
                         } else {
@@ -58,13 +55,11 @@ async function executeQuery(query: string, params: any[]): Promise<any[]> {
     return new Promise<any[]>((resolve, reject) => {
         firebird.attachOrCreate(dbOptions, (err, db) => {
             if (err) {
-                console.log(err);
                 return reject(err)
             }
 
             db.query(query, params, (err, result: any[]) => {
                 if (err) {
-                    console.log(err);
                     return reject(err)
                 }
 
@@ -80,10 +75,8 @@ async function executeQueryBlob(ssql: string, params: any): Promise<any[]> {
             if (err)
 
                 throw err;
-            console.log(err);
             db.transaction(firebird.ISOLATION_READ_COMMITTED, (err, transaction) => {
                 if (err) {
-                    console.log(err);
                     throw err;
                 }
 

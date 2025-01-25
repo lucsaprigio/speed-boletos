@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/table"
 import { Boletos } from "@/app/(components)/datatable/_interfaces/Boletos"
 import { Button } from "./button"
+import { toast } from "@/hooks/use-toast"
+import { ToastAction } from "./toast"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -35,7 +37,13 @@ export function DataTable<TData extends Boletos, TValue>({
     async function handleDownloadZipDupl(duplicatas: number[]) {
         try {
             document.body.style.cursor = 'progress';
-            console.log(duplicatas)
+
+            toast({
+                title: 'Gerando ZIP',
+                description: 'Aguarde um momento, o download será iniciado em breve',
+                action: <ToastAction altText="Fechar">Fechar</ToastAction>,
+                variant: 'default'
+            });
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/boletos/download-zip`, {
                 method: 'POST',
@@ -59,7 +67,12 @@ export function DataTable<TData extends Boletos, TValue>({
             a.click();
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.log(error);
+            toast({
+                title: 'Erro ao baixar o arquivo',
+                description: 'Arquivo não encontrado',
+                variant: 'destructive'
+            })
+            throw new Error(error);
         } finally {
             document.body.style.cursor = 'default';
         }

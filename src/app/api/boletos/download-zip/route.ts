@@ -4,7 +4,7 @@ import archiver from "archiver";
 import { PassThrough } from "stream";
 import { rateLimiter } from "@/middlewares/rate-limiter";
 
-export const maxDuration = 20;
+export const maxDuration = 30;
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
     const rateLimitResponse = rateLimiter(request, 15);
@@ -14,7 +14,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     try {
         const { duplicatas } = await request.json();
-        console.log(duplicatas);
 
         if (!duplicatas || !Array.isArray(duplicatas) || duplicatas.length === 0) {
             return NextResponse.json({ error: 'Duplicatas não informadas!' });
