@@ -13,11 +13,11 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-import { ButtonPdf, ButtonPix } from "@/components/buttons-icon";
+import { ButtonPdf, ButtonPix } from "@/app/(components)/buttons-icon";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
-
+import { Checkbox } from "../../components/ui/checkbox";
 
 type BoletosTableProps = {
     data: Duplicatas[];
@@ -37,7 +37,7 @@ export function BoletoTable({ data }: BoletosTableProps) {
                 variant: 'default'
             })
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API}/boletos/download/${dupl}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/boletos/download/${dupl}`, {
                 method: 'GET'
             });
 
@@ -71,6 +71,7 @@ export function BoletoTable({ data }: BoletosTableProps) {
 
     return (
         <Table className="border-[1px] rounded-md border-black mt-20">
+            <Checkbox />
             <TableHeader>
                 <TableRow>
                     <TableHead className="text-blue-950 font-bold">Documento</TableHead>

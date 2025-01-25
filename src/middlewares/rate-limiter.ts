@@ -1,0 +1,35 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { LRUCache } from 'lru-cache';
+
+const timeWindow = 60 * 2000; // Janela de tempo em milissegundos (2 minuto)
+
+interface CacheValue {
+    count: number;
+    startTime: number;
+}
+
+const cache = new LRUCache<string, CacheValue>({
+    max: 500, // Número máximo de itens no cache
+    ttl: timeWindow, // Tempo de vida dos itens no cache
+});
+
+export function rateLimiter(req: NextRequest, rateLimit: number) {
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip');
+    const now = Date.now();
+
+    if (!cache.has(ip)) {
+        cache.set(ip, { count: 1, startTime: now });
+    } else {
+        const { count, startTime } = cache.get(ip);
+        if (now - startTime < timeWindow) {
+            if (count >= rateLimit) {
+                return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+            }
+            cache.set(ip, { count: count + 1, startTime });
+        } else {
+            cache.set(ip, { count: 1, startTime: now });
+        }
+    }
+
+    return undefined;
+}

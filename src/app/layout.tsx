@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from 'next/font/google';
 import "./globals.css";
-import { Header } from "../components/header";
+import { Header } from "./(components)/header";
+import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({
   weight: '400',
@@ -21,8 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`bg-gradient-to-b from-white to-gray-300 ${poppins.className}`}>
+      <body className={`bg-gradient-to-b from-gray-50 to-gray-150 ${poppins.className}`}>
         <Header />
+        <Toaster />
         {children}
       </body>
     </html>

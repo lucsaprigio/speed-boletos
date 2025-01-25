@@ -1,14 +1,16 @@
 import { executeQueryBlob } from "@/database/firebird";
-import { NextRequest, NextResponse } from "next/server";
+import { rateLimiter } from "@/middlewares/rate-limiter";
+import { NextResponse, NextRequest } from "next/server";
 
 export const maxDuration = 20;
 
-type DownloadResponse = {
-    BOLETO: Buffer;
-}
-
 export async function GET(req: NextRequest, props: { params: Promise<{ dupl: string }> }) {
     const params = await props.params;
+
+    const rateLimitResponse = rateLimiter(req, 15);
+    if (rateLimitResponse) {
+        return rateLimitResponse
+    }
 
     try {
         const { dupl } = params;
