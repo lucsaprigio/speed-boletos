@@ -12,7 +12,7 @@ async function fetchBoletos(cdCliente: string) {
             throw new Error(`Número de requisição excedida, por favor tente daqui 2 minutos!`)
         }
 
-        if (!response.ok) {
+        if (!response.ok) { 
             throw new Error(`Error fetching boletos: ${response.statusText} - ${response.status}`);
         }
 
