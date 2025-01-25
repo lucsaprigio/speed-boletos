@@ -33,9 +33,11 @@ export function DataTable<TData extends Boletos, TValue>({
 }: DataTableProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = useState({});
     const [selectedDuplicatas, setSelectedDuplicatas] = useState<number[]>([]);
+    const [loading, setLoading] = useState(false);
 
     async function handleDownloadZipDupl(duplicatas: number[]) {
         try {
+            setLoading(true);
             document.body.style.cursor = 'progress';
 
             toast({
@@ -57,6 +59,8 @@ export function DataTable<TData extends Boletos, TValue>({
                 throw new Error(`Erro ${response.status}: ${response.statusText}`);
             }
 
+            setSelectedDuplicatas([]);
+
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -72,10 +76,12 @@ export function DataTable<TData extends Boletos, TValue>({
                 description: 'Tente novamente mais tarde',
                 variant: 'destructive'
             })
+            setLoading(false)
             throw new Error(error);
         } finally {
             document.body.style.cursor = 'default';
             setSelectedDuplicatas([]);
+            setLoading(false)
         }
     }
 
@@ -150,7 +156,13 @@ export function DataTable<TData extends Boletos, TValue>({
             <div className="h-10 px-3">
                 {
                     selectedDuplicatas.length > 0 &&
-                    <Button variant="default" onClick={() => handleDownloadZipDupl(selectedDuplicatas)}>Baixar duplicatas selecionadas</Button>
+                    <Button
+                        className={`${loading ? "cursor-not-allowed" : "cursor-pointer"}`}
+                        variant="default"
+                        disabled={loading}
+                        onClick={() => handleDownloadZipDupl(selectedDuplicatas)}>Baixar duplicatas selecionadas
+                    </Button>
+
                 }
             </div>
         </div >
