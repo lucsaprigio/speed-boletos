@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { executeTransaction } from "../../../../../database/firebird";
+import { executeTransaction } from "../../../../database/firebird";
 
 import { format } from 'date-fns';
 import { rateLimiter } from "@/middlewares/rate-limiter";
 import { Stats } from "fs";
 
-export async function GET(req: NextRequest, props: { params: Promise<{ cnpjCliente: string, cdCliente: string }> }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ cdCliente: string }> }) {
     const rateLimitResponse = rateLimiter(req, 5);
 
     if (rateLimitResponse) {
@@ -15,14 +15,10 @@ export async function GET(req: NextRequest, props: { params: Promise<{ cnpjClien
     const params = await props.params;
 
     try {
-        const { cdCliente, cnpjCliente } = params;
+        const { cdCliente } = params;
 
         if (!cdCliente) {
             return NextResponse.json({ error: 'Código do cliente inválido' }, { status: 404 });
-        }
-
-        if (!cnpjCliente) {
-            return NextResponse.json({ error: 'CNPJ do cliente inválido' }, { status: 404 });
         }
 
         const date = new Date();
@@ -46,9 +42,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ cnpjClien
         function getCliente() {
             let clientesQuery = `
                 SELECT CGC_CLIENTE, RAZAO_SOCIAL_CLIENTE
-                FROM DB_CLIENTE_CADASTRO WHERE CD_CLIENTE = ${cdCliente} AND CGC_CLIENTE = ${cnpjCliente}
+                FROM DB_CLIENTE_CADASTRO WHERE CD_CLIENTE = ${cdCliente}
             `
-
             return executeTransaction(clientesQuery, []);
         }
 

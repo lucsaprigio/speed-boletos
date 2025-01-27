@@ -9,11 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -31,6 +29,7 @@ async function handleDownloadDupl(dupl: number) {
             title: 'Baixando Arquivo PDF',
             description: 'Aguarde um momento, o download será iniciado em breve',
             action: <ToastAction altText="Fechar">Fechar</ToastAction>,
+            duration: 5000,
             variant: 'default'
         });
 
@@ -51,10 +50,12 @@ async function handleDownloadDupl(dupl: number) {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
+
     } catch (error) {
         toast({
             title: 'Erro ao baixar o arquivo',
             description: 'Arquivo não encontrado',
+            duration: 5000,
             variant: 'destructive'
         });
     } finally {
@@ -117,7 +118,6 @@ const columns: ColumnDef<Boletos>[] = [
         enableHiding: false,
     },
     {
-
         accessorKey: "SP_DOCUMENTO",
         header: "Documento",
         cell: ({ row }) => {
@@ -139,20 +139,21 @@ const columns: ColumnDef<Boletos>[] = [
 
             const formattedDate = format(date, "dd/MM/yyyy")
 
-            return <div>{formattedDate}</div>
+            return <div className={`max-sm:hidden text-center ${row.getValue("SP_DIAS") as number > 5 && "text-red-700 font-bold "}`}>{formattedDate}</div>
         }
     },
-    {
-        accessorKey: "SP_EMISSAO",
-        header: "Emissão",
-        cell: ({ row }) => {
-            const date = row.getValue("SP_EMISSAO") as Date;
-
-            const formattedDate = format(date, "dd/MM/yyyy")
-
-            return <div>{formattedDate}</div>
-        }
-    },
+    /*     {
+            accessorKey: "SP_EMISSAO",
+            header: "Emissão",
+            cell: ({ row }) => {
+                const date = row.getValue("SP_EMISSAO") as Date;
+    
+                const formattedDate = format(date, "dd/MM/yyyy")
+    
+                return <div>{formattedDate}</div>
+            }
+        }, 
+    */
     {
         accessorKey: "SP_VALOR",
         header: "Valor",
@@ -166,9 +167,13 @@ const columns: ColumnDef<Boletos>[] = [
     },
     {
         accessorKey: "SP_DIAS",
-        header: "Dias",
+        header: () => {
+            return (
+                <div className="max-sm:hidden text-center">Dias</div>
+            )
+        },
         cell: ({ row }) => {
-            return <div className="text-center">{row.getValue("SP_DIAS")}</div>
+            return <div className={`max-sm:hidden text-center ${row.getValue("SP_DIAS") as number > 5 && "text-red-700 font-bold"}`}>{row.getValue("SP_DIAS")}</div>
         }
     },
     {

@@ -5,14 +5,14 @@ import { AppError } from "@/AppError/AppError";
 
 export const maxDuration = 30;
 
-async function fetchBoletos(cdCliente: string, cnpjCliente: string) {
+async function fetchBoletos(cdCliente: string) {
     try {
 
-        if (!cdCliente || !cnpjCliente) {
+        if (!cdCliente) {
             throw new AppError('Código do cliente ou CNPJ do cliente inválido', 400);
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/boletos/${cnpjCliente}/${cdCliente}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/boletos/${cdCliente}`);
 
         if (response.status === 429) {
             throw new AppError(`Número de requisição excedida, por favor tente daqui 2 minutos!`, 429)
@@ -49,7 +49,7 @@ export default async function SpdBoleto(props) {
     let statusCode: number;
 
     try {
-        response = await fetchBoletos(params.cdCliente, params.cnpjCliente);
+        response = await fetchBoletos(params.cdCliente);
     } catch (err) {
         if (err instanceof AppError) {
             error = err.message;
@@ -71,7 +71,7 @@ export default async function SpdBoleto(props) {
 
     return (
         <main className="min-h-screen flex items-center justify-center">
-            <div className="flex items-center justify-center">
+            <div className="max-sm:w-6/12 flex items-center justify-center">
                 {
                     response && (
                         <div className="flex flex-col items-center justify-center py-8">

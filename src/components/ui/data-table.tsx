@@ -44,6 +44,7 @@ export function DataTable<TData extends Boletos, TValue>({
                 title: 'Gerando ZIP',
                 description: 'Aguarde um momento, o download será iniciado em breve',
                 action: <ToastAction altText="Fechar">Fechar</ToastAction>,
+                duration: 5000,
                 variant: 'default'
             });
 
@@ -74,6 +75,7 @@ export function DataTable<TData extends Boletos, TValue>({
             toast({
                 title: 'Erro ao baixar o arquivo',
                 description: 'Tente novamente mais tarde',
+                duration: 5000,
                 variant: 'destructive'
             })
             setLoading(false)
@@ -103,7 +105,7 @@ export function DataTable<TData extends Boletos, TValue>({
     }, [rowSelection, table]);
 
     return (
-        <div className="rounded-md border">
+        <div className="max-sm:w-full rounded-md border">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -131,7 +133,7 @@ export function DataTable<TData extends Boletos, TValue>({
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                className="hover:bg-gray-150 transition-all duration-100"
+                                className={`hover:bg-gray-150 transition-all duration-100 ${row.original.SP_DIAS > 5 && "bg-red-200 hover:bg-red-300"} `}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
