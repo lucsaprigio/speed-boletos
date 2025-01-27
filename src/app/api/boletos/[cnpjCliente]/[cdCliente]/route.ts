@@ -1,22 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { executeTransaction } from "../../../../database/firebird";
+import { executeTransaction } from "../../../../../database/firebird";
 
 import { format } from 'date-fns';
 import { rateLimiter } from "@/middlewares/rate-limiter";
+import { Stats } from "fs";
 
-export async function GET(req: NextRequest, props: { params: Promise<{ cdCliente: string }> }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ cnpjCliente: string, cdCliente: string }> }) {
     const rateLimitResponse = rateLimiter(req, 5);
+
     if (rateLimitResponse) {
         return rateLimitResponse
     }
 
-    try {
-        const params = await props.params;
+    const params = await props.params;
 
-        const { cdCliente } = params;
+    try {
+        const { cdCliente, cnpjCliente } = params;
 
         if (!cdCliente) {
-            return NextResponse.json({ error: 'cdCliente is undefined' });
+            return NextResponse.json({ error: 'Código do cliente inválido' }, { status: 404 });
+        }
+
+        if (!cnpjCliente) {
+            return NextResponse.json({ error: 'CNPJ do cliente inválido' }, { status: 404 });
         }
 
         const date = new Date();
@@ -40,7 +46,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ cdCliente
         function getCliente() {
             let clientesQuery = `
                 SELECT CGC_CLIENTE, RAZAO_SOCIAL_CLIENTE
-                FROM DB_CLIENTE_CADASTRO WHERE CD_CLIENTE = ${cdCliente}
+                FROM DB_CLIENTE_CADASTRO WHERE CD_CLIENTE = ${cdCliente} AND CGC_CLIENTE = ${cnpjCliente}
             `
 
             return executeTransaction(clientesQuery, []);
@@ -51,8 +57,12 @@ export async function GET(req: NextRequest, props: { params: Promise<{ cdCliente
             getCliente()
         ]);
 
-        if (!boletos[0]) {
-            return NextResponse.json({ error: 'Usuário não encontrado' });
+        if (cliente.length === 0) {
+            return NextResponse.json({ error: 'Cliente não encontrado' }, { status: 404 });
+        }
+
+        if (boletos.length === 0) {
+            return NextResponse.json({ error: 'Não existe boletos para este usuário' }, { status: 404 });
         };
 
         return NextResponse.json({ boletos, cliente });

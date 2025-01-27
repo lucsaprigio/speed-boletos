@@ -5,12 +5,21 @@ import { AppError } from "@/AppError/AppError";
 
 export const maxDuration = 30;
 
-async function fetchBoletos(cdCliente: string) {
+async function fetchBoletos(cdCliente: string, cnpjCliente: string) {
     try {
-        const response = await fetch(`${process.env.NEXT_API_LOCAL}/boletos/${cdCliente}`);
+
+        if (!cdCliente || !cnpjCliente) {
+            throw new AppError('Código do cliente ou CNPJ do cliente inválido', 400);
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/boletos/${cnpjCliente}/${cdCliente}`);
 
         if (response.status === 429) {
             throw new AppError(`Número de requisição excedida, por favor tente daqui 2 minutos!`, 429)
+        }
+
+        if (response.status === 404) {
+            throw new AppError(`Cliente não encontrado.`, 404)
         }
 
         if (!response.ok) {
@@ -34,12 +43,13 @@ export type BoletosResponse = {
 
 export default async function SpdBoleto(props) {
     const params = await props.params;
+
     let response: BoletosResponse;
     let error: string;
     let statusCode: number;
 
     try {
-        response = await fetchBoletos(params.id)
+        response = await fetchBoletos(params.cdCliente, params.cnpjCliente);
     } catch (err) {
         if (err instanceof AppError) {
             error = err.message;
@@ -49,9 +59,10 @@ export default async function SpdBoleto(props) {
 
     if (error) {
         return (
-            <main className="min-h-screen flex justify-center mt-24">
-                <div className="flex flex-col text-red-600 gap-10">
-                    <h1 className="font-bold text-7xl font-mono">Error {statusCode}</h1>
+            <main className="min-h-screen flex justify-center bg-zinc-800">
+                <div className="flex flex-col items-center text-gray-100 gap-10 p-10">
+                    <h2 className="font-bold text-7xl font-mono mt-10">Error</h2>
+                    <h2 className="font-bold text-4xl">{statusCode}</h2>
                     <p className="text-2xl">{error}</p>
                 </div>
             </main>
