@@ -5,6 +5,7 @@ import { Boletos } from "../_interfaces/Boletos"
 import { DataTable } from "@/components/ui/data-table"
 import { formatCurrency } from "@/utils/formatCurrency"
 import { format } from "date-fns"
+import { ptBR } from 'date-fns/locale/pt-BR';
 import { Checkbox } from "@/components/ui/checkbox"
 
 import {
@@ -137,7 +138,7 @@ const columns: ColumnDef<Boletos>[] = [
         cell: ({ row }) => {
             const date = row.getValue("SP_VENCIMENTO") as Date;
 
-            const formattedDate = format(date, "dd/MM/yyyy")
+            const formattedDate = format(date, "dd/MM/yyyy", { locale: ptBR })
 
             return <div className={`max-sm:hidden text-center ${row.getValue("SP_DIAS") as number > 5 && "text-red-700 font-bold "}`}>{formattedDate}</div>
         }
