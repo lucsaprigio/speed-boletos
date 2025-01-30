@@ -137,7 +137,8 @@ const columns: ColumnDef<Boletos>[] = [
         accessorKey: "SP_VENCIMENTO",
         header: "Vencimento",
         cell: ({ row }) => {
-            const date = row.getValue("SP_VENCIMENTO") as Date;
+            const dateValue = row.getValue("SP_VENCIMENTO") as Date;
+            const date = new Date(dateValue);
 
             const formattedDate = formatInTimeZone(date, "America/Sao_Paulo", "dd/MM/yyyy")
 
