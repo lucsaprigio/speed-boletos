@@ -133,7 +133,7 @@ export function DataTable<TData extends Boletos, TValue>({
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                className={`hover:bg-gray-150 transition-all duration-100 ${row.original.SP_DIAS > 5 && "bg-red-200 hover:bg-red-300"} `}
+                                className={`hover:bg-gray-150 transition-all duration-100 ${row.original.SP_DIAS > 5 && "bg-red-200 hover:bg-red-300"}`}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>

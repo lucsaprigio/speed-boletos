@@ -50,7 +50,6 @@ export default async function SpdBoleto(props) {
 
     try {
         response = await fetchBoletos(params.cdCliente);
-        console.log(response.boletos)
     } catch (err) {
         if (err instanceof AppError) {
             error = err.message;

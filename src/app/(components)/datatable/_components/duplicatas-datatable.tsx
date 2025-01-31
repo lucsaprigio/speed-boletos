@@ -134,15 +134,10 @@ const columns: ColumnDef<Boletos>[] = [
         }
     },
     {
-        accessorKey: "SP_VENCIMENTO",
+        accessorKey: "TIMEZONE_SP_VENCIMENTO",
         header: "Vencimento",
         cell: ({ row }) => {
-            const dateValue = row.getValue("SP_VENCIMENTO") as Date;
-            const date = new Date(dateValue);
-
-            const formattedDate = formatInTimeZone(date, "America/Sao_Paulo", "dd/MM/yyyy")
-
-            return <div className={`max-sm:hidden text-center ${row.getValue("SP_DIAS") as number > 5 && "text-red-700 font-bold "}`}>{formattedDate}</div>
+            return <div className={`max-sm:hidden text-center ${row.getValue("SP_DIAS") as number > 5 && "text-red-700 font-bold "}`}>{row.getValue("TIMEZONE_SP_VENCIMENTO")}</div>
         }
     },
     /*     {

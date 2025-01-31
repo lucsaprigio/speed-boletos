@@ -61,7 +61,26 @@ export async function GET(req: NextRequest, props: { params: Promise<{ cdCliente
             return NextResponse.json({ error: 'Não existe boletos para este usuário' }, { status: 404 });
         };
 
-        return NextResponse.json({ boletos, cliente });
+        const formattedBoletos = boletos.map((boleto: Duplicatas) => {
+            const vencimentoDate = new Date(boleto.SP_VENCIMENTO);
+            const emissaoDate = new Date(boleto.SP_EMISSAO);
+
+            const formattedVencimento = isNaN(vencimentoDate.getTime())
+                ? 'Invalid Date'
+                : formatInTimeZone(vencimentoDate, "America/Sao_Paulo", "dd/MM/yyyy");
+
+            const formattedEmissao = isNaN(emissaoDate.getTime())
+                ? 'Invalid Date'
+                : formatInTimeZone(emissaoDate, "America/Sao_Paulo", "dd/MM/yyyy");
+
+            return {
+                ...boleto,
+                TIMEZONE_SP_VENCIMENTO: formattedVencimento,
+                TIMEZONE_SP_EMISSAO: formattedEmissao
+            };
+        });
+
+        return NextResponse.json({ boletos: formattedBoletos, cliente });
     } catch (err) {
         return NextResponse.json({ error: err.message });
     }
