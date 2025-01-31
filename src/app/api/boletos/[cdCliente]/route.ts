@@ -4,6 +4,7 @@ import { executeTransaction } from "../../../../database/firebird";
 import { format } from 'date-fns';
 import { rateLimiter } from "@/middlewares/rate-limiter";
 import { formatInTimeZone } from "date-fns-tz";
+import { Duplicatas } from "@/dto/Duplicatas";
 
 export async function GET(req: NextRequest, props: { params: Promise<{ cdCliente: string }> }) {
     const rateLimitResponse = rateLimiter(req, 5);
