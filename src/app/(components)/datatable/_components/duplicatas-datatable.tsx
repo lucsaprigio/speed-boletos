@@ -5,7 +5,7 @@ import { Boletos } from "../_interfaces/Boletos"
 import { DataTable } from "@/components/ui/data-table"
 import { formatCurrency } from "@/utils/formatCurrency"
 import { format } from "date-fns"
-import { formatInTimeZone } from 'date-fns-tz';
+import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { Checkbox } from "@/components/ui/checkbox"
 
