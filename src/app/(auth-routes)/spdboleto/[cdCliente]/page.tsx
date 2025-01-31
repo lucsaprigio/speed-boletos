@@ -4,7 +4,6 @@ import { Duplicatas } from "@/dto/Duplicatas";
 import { AppError } from "@/AppError/AppError";
 
 export const maxDuration = 30;
-export const dynamic = "force-dynamic";
 
 async function fetchBoletos(cdCliente: string) {
     try {

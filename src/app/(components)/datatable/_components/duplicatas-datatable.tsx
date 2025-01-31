@@ -4,8 +4,8 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Boletos } from "../_interfaces/Boletos"
 import { DataTable } from "@/components/ui/data-table"
 import { formatCurrency } from "@/utils/formatCurrency"
-import { format } from "date-fns"
-import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
+import { format, formatDate } from "date-fns"
+import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -137,10 +137,13 @@ const columns: ColumnDef<Boletos>[] = [
         accessorKey: "SP_VENCIMENTO",
         header: "Vencimento",
         cell: ({ row }) => {
-            const formattedTimeZone = toZonedTime(row.getValue("SP_VENCIMENTO") as Date, "America/Sao_Paulo");
-            const formattedDate = format(formattedTimeZone, "dd/MM/yyyy");
+            const dateValue = new Date(row.getValue("SP_VENCIMENTO"));
 
-            return <div className={`max-sm:hidden text-center ${row.getValue("SP_DIAS") as number > 5 && "text-red-700 font-bold "}`}>{formattedDate}</div>
+            // const formattedDate = formatInTimeZone(dateValue, "America/Sao_Paulo", "dd/MM/yyyy");
+
+            const dateFormatted = dateValue.toLocaleDateString('pt-BR', { timeZone: "UTC" });
+
+            return <div className={`max-sm:hidden text-center ${row.getValue("SP_DIAS") as number > 5 && "text-red-700 font-bold "}`}>{dateFormatted}</div>
         }
     },
     /*     {
