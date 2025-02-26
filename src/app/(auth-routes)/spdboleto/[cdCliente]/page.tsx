@@ -44,9 +44,9 @@ export type BoletosResponse = {
 export default async function SpdBoleto(props) {
     const params = await props.params;
 
-    let response: BoletosResponse;
-    let error: string;
-    let statusCode: number;
+    let response: BoletosResponse = { boletos: [], cliente: [] };
+    let error: string = '';
+    let statusCode: number = 0;
 
     try {
         response = await fetchBoletos(params.cdCliente);

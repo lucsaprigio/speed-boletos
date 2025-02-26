@@ -1,9 +1,12 @@
 'use client'
 
+import { connectWebSocket } from "@/utils/socketClient";
 import { FilePdf, PixLogo } from "@phosphor-icons/react";
-import { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes, useEffect } from "react";
 
-type ButtonProps = & ButtonHTMLAttributes<HTMLButtonElement>
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+    price?: number;
+}
 
 function ButtonPdf({ ...rest }: ButtonProps) {
     return (
@@ -13,7 +16,7 @@ function ButtonPdf({ ...rest }: ButtonProps) {
     )
 }
 
-function ButtonPix({ ...rest }: ButtonProps) {
+function ButtonPix({ price, ...rest }: ButtonProps) {
     return (
         <button {...rest}>
             <PixLogo className="text-cyan-400" size={24} />

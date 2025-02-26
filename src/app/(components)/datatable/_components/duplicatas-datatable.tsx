@@ -4,9 +4,6 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Boletos } from "../_interfaces/Boletos"
 import { DataTable } from "@/components/ui/data-table"
 import { formatCurrency } from "@/utils/formatCurrency"
-import { format, formatDate } from "date-fns"
-import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz';
-import { ptBR } from 'date-fns/locale/pt-BR';
 import { Checkbox } from "@/components/ui/checkbox"
 
 import {
@@ -22,8 +19,11 @@ import { ToastAction } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal } from "lucide-react"
 import { FilePdf, PixLogo } from "@phosphor-icons/react"
+import { useEffect, useRef, useState } from "react"
+import { socket } from '@/utils/socketClient';
 
 async function handleDownloadDupl(dupl: number) {
+
     try {
         document.body.style.cursor = 'progress';
 
@@ -65,7 +65,71 @@ async function handleDownloadDupl(dupl: number) {
     }
 }
 
-const DropdownActions = ({ dupl }) => {
+
+
+const DropdownActions = ({ dupl, amount }) => {
+    const ticketWindowRef = useRef<Window | null>(null);
+
+    async function handleGeneratePix(amount: number) {
+
+        const paymentData = {
+            transaction_amount: 0.01, // Substitua pelo valor desejado
+            description: "Pagamento",
+            payment_method_id: "pix",
+            email: "lucsaprigio@hotmail.com",
+            first_name: "Speed"
+        };
+
+        try {
+            const response = await fetch('/api/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(paymentData)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                const ticketWindow = window.open(result.url.ticket_url, '_blank');
+                ticketWindowRef.current = ticketWindow;
+            } else {
+                console.error('Erro ao criar pagamento:', result.error);
+            }
+        } catch (error) {
+            console.error('Erro ao fazer requisição:', error);
+        }
+    };
+
+    useEffect(() => {
+        function handlePaymentCreated() {
+            toast({
+                title: 'Pagamento criado',
+            });
+            console.log('Payment created:', ticketWindowRef.current);
+        };
+
+        function handlePaymentUpdated() {
+            toast({
+                title: 'Pagamento Feito com sucesso',
+                description: 'O pagamento foi realizado com sucesso',
+            });
+            console.log('Payment updated:', ticketWindowRef.current);
+            if (ticketWindowRef.current) {
+                ticketWindowRef.current.close();
+            }
+        };
+
+        socket.on('payment_created', handlePaymentCreated);
+        socket.on('payment.updated', handlePaymentUpdated);
+
+        return () => {
+            socket.off('payment_created', handlePaymentCreated);
+            socket.off('payment.updated', handlePaymentUpdated);
+        };
+    }, []);
+
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -85,9 +149,9 @@ const DropdownActions = ({ dupl }) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     className="flex w-full justify-between group"
-                    onClick={() => { }}
+                    onClick={() => handleGeneratePix(amount)}
                 >
-                    <strong className="text-gray-50 group-hover:text-cyan-400">Pix (Em breve)</strong>
+                    <strong className="text-gray-50 group-hover:text-cyan-400">Pix</strong>
                     <PixLogo className="text-gray-50 group-hover:text-cyan-400" size={24} />
                 </DropdownMenuItem>
             </DropdownMenuContent>
@@ -146,18 +210,6 @@ const columns: ColumnDef<Boletos>[] = [
             return <div className={`max-sm:hidden text-center ${row.getValue("SP_DIAS") as number > 5 && "text-red-700 font-bold "}`}>{dateFormatted}</div>
         }
     },
-    /*     {
-            accessorKey: "SP_EMISSAO",
-            header: "Emissão",
-            cell: ({ row }) => {
-                const date = row.getValue("SP_EMISSAO") as Date;
-    
-                const formattedDate = format(date, "dd/MM/yyyy")
-    
-                return <div>{formattedDate}</div>
-            }
-        }, 
-    */
     {
         accessorKey: "SP_VALOR",
         header: "Valor",
@@ -185,17 +237,22 @@ const columns: ColumnDef<Boletos>[] = [
         enableHiding: false,
         cell: ({ row }) => {
             const dupl = row.original.SP_DOCUMENTO
+            const amount = row.original.SP_VALOR
             return (
-                <DropdownActions dupl={dupl} />
+                <DropdownActions dupl={dupl} amount={amount} />
             )
         },
     },
 ]
 
 interface Props {
-    boletos: Boletos[]
+    boletos: Boletos[];
 }
 
 export default function BoletosDataTable({ boletos }: Props) {
-    return <DataTable columns={columns} data={boletos} />
+    return (
+        <>
+            <DataTable columns={columns} data={boletos} />
+        </>
+    )
 }

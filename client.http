@@ -1,0 +1,12 @@
+@baseUrl = http://localhost:3000/api
+
+# @name payment
+POST {{baseUrl}}/payment
+Content-Type: application/json
+
+{
+        "transaction_amount": 0.02,
+        "description":"Pagamento",
+        "first_name":"Lucas",
+        "email":"lucsaprigio@hotmail.com"
+}
