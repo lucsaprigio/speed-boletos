@@ -22,6 +22,22 @@ import { FilePdf, PixLogo } from "@phosphor-icons/react"
 import { useEffect, useRef, useState } from "react"
 import { socket } from '@/utils/socketClient';
 
+interface Props {
+    boletos: Boletos[];
+    cliente: string;
+}
+
+export default function BoletosDataTable({ boletos, cliente }: Props) {
+    const [clientName, setClienteName] = useState(cliente);
+
+    return (
+        <>
+            <DataTable columns={columns(clientName)} data={boletos} />
+            {/* <DataTable columns={columns} data={boletos} /> */}
+        </>
+    )
+}
+
 async function handleDownloadDupl(dupl: number) {
 
     try {
@@ -65,19 +81,17 @@ async function handleDownloadDupl(dupl: number) {
     }
 }
 
-
-
-const DropdownActions = ({ dupl, amount }) => {
+const DropdownActions = ({ dupl, amount, clientName }) => {
     const ticketWindowRef = useRef<Window | null>(null);
 
     async function handleGeneratePix(amount: number) {
 
         const paymentData = {
-            transaction_amount: 0.01, // Substitua pelo valor desejado
+            transaction_amount: amount, // Substitua pelo valor desejado
             description: "Pagamento",
             payment_method_id: "pix",
             email: "lucsaprigio@hotmail.com",
-            first_name: "Speed"
+            first_name: clientName
         };
 
         try {
@@ -106,7 +120,6 @@ const DropdownActions = ({ dupl, amount }) => {
             toast({
                 title: 'Pagamento criado',
             });
-            console.log('Payment created:', ticketWindowRef.current);
         };
 
         function handlePaymentUpdated() {
@@ -114,7 +127,6 @@ const DropdownActions = ({ dupl, amount }) => {
                 title: 'Pagamento Feito com sucesso',
                 description: 'O pagamento foi realizado com sucesso',
             });
-            console.log('Payment updated:', ticketWindowRef.current);
             if (ticketWindowRef.current) {
                 ticketWindowRef.current.close();
             }
@@ -159,7 +171,7 @@ const DropdownActions = ({ dupl, amount }) => {
     );
 };
 
-const columns: ColumnDef<Boletos>[] = [
+const columns = (clientName: string): ColumnDef<Boletos>[] => [
     {
         id: "select",
         header: ({ table }) => (
@@ -239,20 +251,9 @@ const columns: ColumnDef<Boletos>[] = [
             const dupl = row.original.SP_DOCUMENTO
             const amount = row.original.SP_VALOR
             return (
-                <DropdownActions dupl={dupl} amount={amount} />
+                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} />
             )
         },
     },
-]
+];
 
-interface Props {
-    boletos: Boletos[];
-}
-
-export default function BoletosDataTable({ boletos }: Props) {
-    return (
-        <>
-            <DataTable columns={columns} data={boletos} />
-        </>
-    )
-}

@@ -12,7 +12,9 @@ async function fetchBoletos(cdCliente: string) {
             throw new AppError('Código do cliente ou CNPJ do cliente inválido', 400);
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/boletos/${cdCliente}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/boletos/${cdCliente}`, {
+            cache: 'no-store'
+        });
 
         if (response.status === 429) {
             throw new AppError(`Número de requisição excedida, por favor tente daqui 2 minutos!`, 429)
@@ -41,7 +43,7 @@ export type BoletosResponse = {
     cliente: Cliente[]
 }
 
-export default async function SpdBoleto(props) {
+export default async function SpdBoleto(props: any) {
     const params = await props.params;
 
     let response: BoletosResponse = { boletos: [], cliente: [] };
@@ -76,7 +78,7 @@ export default async function SpdBoleto(props) {
                     response && (
                         <div className="flex flex-col items-center justify-center py-8">
                             <h2 className="text-1xl font-bold my-3">{response.cliente[0].CGC_CLIENTE} -  {response.cliente[0].RAZAO_SOCIAL_CLIENTE} </h2>
-                            <BolatosDataTable boletos={response.boletos} />
+                            <BolatosDataTable boletos={response.boletos} cliente={response.cliente[0].RAZAO_SOCIAL_CLIENTE} />
                         </div>
                     )
                 }
