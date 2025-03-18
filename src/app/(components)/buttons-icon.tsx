@@ -1,6 +1,5 @@
 'use client'
 
-import { connectWebSocket } from "@/utils/socketClient";
 import { FilePdf, PixLogo } from "@phosphor-icons/react";
 import { ButtonHTMLAttributes, useEffect } from "react";
 

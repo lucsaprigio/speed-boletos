@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const url = "http://localhost:3000";
+const url = process.env.NEXT_PUBLIC_SOCKET_URL;
 
 export const socket = io(url, {
     path: '/api/socket/webhook',
