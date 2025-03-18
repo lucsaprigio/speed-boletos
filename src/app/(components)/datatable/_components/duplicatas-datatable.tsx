@@ -96,7 +96,7 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
 
     async function handleGeneratePix(amount: number, dupl: number) {
         const paymentData = {
-            transaction_amount: amount, // Substitua pelo valor desejado
+            transaction_amount: parseFloat(amount.toFixed(2)), // Substitua pelo valor desejado
             description: `Pagamento Speed: ${clientName}`,
             payment_method_id: "pix",
             email: "lucsaprigio@hotmail.com",
@@ -267,14 +267,17 @@ const columns = (clientName: string, cnpjValue: string): ColumnDef<Boletos>[] =>
         }
     },
     {
-        accessorKey: "SP_VALOR",
+        accessorKey: "SP_PIX",
         header: "Valor",
         cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("SP_VALOR"));
+            // const amount = parseFloat(row.getValue("SP_VALOR"));
+            const amountPix = parseFloat(row.getValue("SP_PIX"));
+            const days = parseInt(row.getValue("SP_DIAS"));
 
-            const formattedAmount = formatCurrency(amount);
+            // const formattedAmount = formatCurrency(amount);
+            const formattedAmountPix = formatCurrency(amountPix);
 
-            return <div>{formattedAmount}</div>
+            return <div>{formatCurrency(amountPix)}</div>
         }
     },
     {
@@ -293,11 +296,11 @@ const columns = (clientName: string, cnpjValue: string): ColumnDef<Boletos>[] =>
         enableHiding: false,
         cell: ({ row }) => {
             const dupl = row.original.SP_DOCUMENTO
-            const amount = row.original.SP_VALOR
             const days = row.original.SP_DIAS
+            const amount = row.original.SP_PIX
 
             return (
-                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} cnpjValue={cnpjValue} showPixButton={days >= 5}/>
+                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} cnpjValue={cnpjValue} showPixButton={days >= 5} />
             )
         },
     },

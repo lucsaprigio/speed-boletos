@@ -90,7 +90,7 @@ export function BoletoTable({ data }: BoletosTableProps) {
                             <TableCell className="text-center">{boleto.SP_PARCELA}</TableCell>
                             <TableCell>{format(boleto.SP_VENCIMENTO, 'dd/MM/yyyy')}</TableCell>
                             <TableCell>{format(boleto.SP_EMISSAO, 'dd/MM/yyyy')}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(boleto.SP_VALOR)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(boleto.SP_PIX)}</TableCell>
                             <TableCell className="text-center">{boleto.SP_DIAS}</TableCell>
                             <TableCell className="space-x-2">
                                 <ButtonPdf onClick={() => { handleDownloadDupl(boleto.SP_DOCUMENTO) }} />

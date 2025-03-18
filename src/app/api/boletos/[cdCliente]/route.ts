@@ -34,7 +34,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ cdCliente
               SP_RETORNO_SITE_SPEED.sp_emissao,
               SP_RETORNO_SITE_SPEED.sp_valor,
               SP_RETORNO_SITE_SPEED.sp_atrz,
-              SP_RETORNO_SITE_SPEED.sp_dias
+              SP_RETORNO_SITE_SPEED.sp_dias,
+              SP_RETORNO_SITE_SPEED.sp_pix
             FROM SP_RETORNO_SITE_SPEED('${cdCliente}', '${dateFormatted}')
         `
             return executeTransaction(boletosQuery, []);
