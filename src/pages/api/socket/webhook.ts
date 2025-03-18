@@ -15,32 +15,36 @@ async function ioHandler(req: NextApiRequest, res: NextApiResponseServerIo) {
     if (!res.socket.server.io) {
         const path = "/api/socket/webhook";
         const httpServer: NetServer = res.socket.server as any;
-        const io = new ServerIO(httpServer, {
-            path
-        });
+        const io = new ServerIO(httpServer, { path });
+
         res.socket.server.io = io;
 
         io.on("connection", (socket) => {
-            console.log("A user connected");
+
+            console.log(`User connected: ${socket.id}`);
 
             socket.on("disconnect", () => {
-                console.log("User disconnected")
-            })
-        })
+                console.log(`User disconnected: ${socket.id}`);
+            });
+        });
     }
 
     if (req.method === 'POST') {
         try {
             const rawBody = await getRawBody(req);
             const event = JSON.parse(rawBody.toString('utf-8'));
-            console.log('Evento recebido:', event);
+            console.log(event)
 
             const io = res.socket.server.io;
 
             if (event.action === 'payment.created') {
-                io.emit('payment_created', event);
-            } else if (event.action === 'payment.updated') {
-                io.emit('payment.updated', event);
+                // console.log(`📤 Emitindo evento: payment.${event.data.id}.created`);
+                io.emit(`payment.created`);
+            }
+
+            if (event.action === 'payment.updated') {
+                // console.log(`📤 Emitindo evento: payment.${event.data.id}.updated`);
+                io.emit(`payment.updated`);
             }
 
             res.status(200).json({ received: true });

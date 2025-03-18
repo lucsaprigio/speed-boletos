@@ -1,17 +1,18 @@
+import { env } from '@/env';
 import firebird from 'node-firebird';
 
 export var dbOptions = {
     host: process.env.NEXT_API_HOST,
-    port: 3050,
-    database: "/database/Financeiro/financeiro.fdb",
+    port: parseInt(process.env.NEXT_API_PORT!),
+    database: process.env.NEXT_API_DATABASE,
     user: process.env.NEXT_API_USER,
     password: process.env.NEXT_API_PASSWORD
 };
 
 export var dbBlob = {
     host: process.env.NEXT_API_HOST,
-    port: 3050,
-    database: "/database/Financeiro/financeiro.fdb",
+    port: parseInt(process.env.NEXT_API_PORT!),
+    database: process.env.NEXT_API_DATABASE,
     user: process.env.NEXT_API_USER,
     password: process.env.NEXT_API_PASSWORD,
 }

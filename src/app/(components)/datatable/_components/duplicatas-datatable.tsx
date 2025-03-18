@@ -21,18 +21,22 @@ import { MoreHorizontal } from "lucide-react"
 import { FilePdf, PixLogo } from "@phosphor-icons/react"
 import { useEffect, useRef, useState } from "react"
 import { socket } from '@/utils/socketClient';
+import { useRouter } from "next/navigation"
 
 interface Props {
     boletos: Boletos[];
     cliente: string;
+    cnpj: string;
 }
 
-export default function BoletosDataTable({ boletos, cliente }: Props) {
+export default function BoletosDataTable({ boletos, cliente, cnpj }: Props) {
     const [clientName, setClienteName] = useState(cliente);
+    const [cnpjValue, setCnpjValue] = useState(cnpj);
+    const router = useRouter();
 
     return (
         <>
-            <DataTable columns={columns(clientName)} data={boletos} />
+            <DataTable columns={columns(clientName, cnpjValue)} data={boletos} />
             {/* <DataTable columns={columns} data={boletos} /> */}
         </>
     )
@@ -81,18 +85,27 @@ async function handleDownloadDupl(dupl: number) {
     }
 }
 
-const DropdownActions = ({ dupl, amount, clientName }) => {
+const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton }) => {
     const ticketWindowRef = useRef<Window | null>(null);
+    const duplSaveRef = useRef<number | null>(null);
+    const amountRef = useRef<number | null>(null);
+    const cnpjRef = useRef<string | null>(null);
+    const idRef = useRef<string | null>(null);
+    const router = useRouter();
 
-    async function handleGeneratePix(amount: number) {
 
+    async function handleGeneratePix(amount: number, dupl: number) {
         const paymentData = {
-            transaction_amount: amount, // Substitua pelo valor desejado
-            description: "Pagamento",
+            transaction_amount: 0.01, // Substitua pelo valor desejado
+            description: `Pagamento Speed: ${clientName}`,
             payment_method_id: "pix",
             email: "lucsaprigio@hotmail.com",
             first_name: clientName
         };
+
+        cnpjRef.current = cnpjValue
+        amountRef.current = amount
+        duplSaveRef.current = dupl;
 
         try {
             const response = await fetch('/api/payment', {
@@ -104,9 +117,11 @@ const DropdownActions = ({ dupl, amount, clientName }) => {
             });
 
             const result = await response.json();
+
             if (response.ok) {
                 const ticketWindow = window.open(result.url.ticket_url, '_blank');
                 ticketWindowRef.current = ticketWindow;
+                idRef.current = result.url.id;
             } else {
                 console.error('Erro ao criar pagamento:', result.error);
             }
@@ -115,29 +130,58 @@ const DropdownActions = ({ dupl, amount, clientName }) => {
         }
     };
 
-    useEffect(() => {
-        function handlePaymentCreated() {
-            toast({
-                title: 'Pagamento criado',
-            });
-        };
+    async function handleCheckDupl() {
+        if (!duplSaveRef.current) return;
 
-        function handlePaymentUpdated() {
-            toast({
-                title: 'Pagamento Feito com sucesso',
-                description: 'O pagamento foi realizado com sucesso',
-            });
-            if (ticketWindowRef.current) {
-                ticketWindowRef.current.close();
+        try {
+            const request = {
+                content: duplSaveRef.current?.toString(),
+                value: amountRef.current?.toString(),
+                cnpj: cnpjRef.current?.toString()
             }
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_FILE}/save-file`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(request)
+            })
+
+            if (!response.ok) {
+                console.log(response)
+            }
+
+
+        } catch (error) {
+            toast({
+                title: 'Ocorreu um erro!',
+                description: "Ocorreu um erro interno ao baixar sua duplicata, por favor envie o comprovante para liberarmos seu sistema!"
+            });
+        }
+    }
+
+    function handlePaymentUpdated() {
+        toast({
+            title: 'Pagamento Feito com sucesso',
+            description: 'O pagamento foi realizado com sucesso',
+        });
+        if (ticketWindowRef.current) {
+            ticketWindowRef.current.close();
+            handleCheckDupl();
+        }
+    };
+
+    useEffect(() => {
+        function handleUpdate() {
+            handlePaymentUpdated();
         };
 
-        socket.on('payment_created', handlePaymentCreated);
-        socket.on('payment.updated', handlePaymentUpdated);
+        socket.on(`payment.updated`, handleUpdate);
 
         return () => {
-            socket.off('payment_created', handlePaymentCreated);
-            socket.off('payment.updated', handlePaymentUpdated);
+            socket.off(`payment.updated`);
+            socket.off('disconnect');
         };
     }, []);
 
@@ -160,8 +204,8 @@ const DropdownActions = ({ dupl, amount, clientName }) => {
                     <FilePdf className="text-gray-50 group-hover:text-red-800" size={24} />
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    className="flex w-full justify-between group"
-                    onClick={() => handleGeneratePix(amount)}
+                    className={`flex w-full justify-between group ${!showPixButton && "hidden"}`}
+                    onClick={() => { handleGeneratePix(amount, dupl) }}
                 >
                     <strong className="text-gray-50 group-hover:text-cyan-400">Pix</strong>
                     <PixLogo className="text-gray-50 group-hover:text-cyan-400" size={24} />
@@ -171,7 +215,7 @@ const DropdownActions = ({ dupl, amount, clientName }) => {
     );
 };
 
-const columns = (clientName: string): ColumnDef<Boletos>[] => [
+const columns = (clientName: string, cnpjValue: string): ColumnDef<Boletos>[] => [
     {
         id: "select",
         header: ({ table }) => (
@@ -250,8 +294,10 @@ const columns = (clientName: string): ColumnDef<Boletos>[] => [
         cell: ({ row }) => {
             const dupl = row.original.SP_DOCUMENTO
             const amount = row.original.SP_VALOR
+            const days = row.original.SP_DIAS
+
             return (
-                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} />
+                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} cnpjValue={cnpjValue} showPixButton={days >= 5}/>
             )
         },
     },

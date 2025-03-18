@@ -1,16 +1,18 @@
 "use server"
 
 import { MercadoPagoConfig, Payment } from 'mercadopago';
+import { env } from '@/env';
 
-type PaymentType = {
-    notification_url: string;
-    description: string;
-    email: string
-    typeIdentification: string;
-    numberIdentification: number;
-    transaction_amount: number;
-    reference: string;
-}
+type PaymentType =
+    {
+        notification_url: string;
+        description: string;
+        email: string
+        typeIdentification: string;
+        numberIdentification: number;
+        transaction_amount: number;
+        reference: string;
+    }
 
 export const getPayment = async (id: string | number) => {
     try {
@@ -44,7 +46,7 @@ export const getStatusPayment = async (id: number | string) => {
     try {
         const client = new MercadoPagoConfig(
             {
-                accessToken: process.env.ACCESS_TOKEN!,
+                accessToken: process.env.MP_ACCESS_TOKEN!,
                 options: {
                     timeout: 5000,
                 }

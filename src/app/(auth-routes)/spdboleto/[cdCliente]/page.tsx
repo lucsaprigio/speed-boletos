@@ -2,6 +2,7 @@ import BolatosDataTable from "@/app/(components)/datatable/_components/duplicata
 import { Cliente } from "@/dto/Clientes";
 import { Duplicatas } from "@/dto/Duplicatas";
 import { AppError } from "@/AppError/AppError";
+import { QRCodeWhatsapp } from "@/app/(components)/qrcode-whatsapp";
 
 export const maxDuration = 30;
 
@@ -78,10 +79,13 @@ export default async function SpdBoleto(props: any) {
                     response && (
                         <div className="flex flex-col items-center justify-center py-8">
                             <h2 className="text-1xl font-bold my-3">{response.cliente[0].CGC_CLIENTE} -  {response.cliente[0].RAZAO_SOCIAL_CLIENTE} </h2>
-                            <BolatosDataTable boletos={response.boletos} cliente={response.cliente[0].RAZAO_SOCIAL_CLIENTE} />
+                            <BolatosDataTable boletos={response.boletos} cliente={response.cliente[0].RAZAO_SOCIAL_CLIENTE} cnpj={response.cliente[0].CGC_CLIENTE}/>
                         </div>
                     )
                 }
+            </div>
+            <div className="absolute bottom-3 right-3">
+                <QRCodeWhatsapp />
             </div>
         </main>
     )
