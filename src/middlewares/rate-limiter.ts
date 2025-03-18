@@ -14,14 +14,15 @@ const cache = new LRUCache<string, CacheValue>({
 });
 
 export function rateLimiter(req: NextRequest, rateLimit: number) {
-    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip');
+    const ip = (req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip')) as string;
     const now = Date.now();
 
-    if (!cache.has(ip)) {
-        cache.set(ip, { count: 1, startTime: now });
+    if (!cache.has(ip as string)) {
+        cache.set(ip as string, { count: 1, startTime: now });
     } else {
-        const { count, startTime } = cache.get(ip);
-        if (now - startTime < timeWindow) {
+        const cacheValue = cache.get(ip as string);
+        if (cacheValue && now - cacheValue.startTime < timeWindow) {
+            const { count, startTime } = cacheValue;
             if (count >= rateLimit) {
                 return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
             }

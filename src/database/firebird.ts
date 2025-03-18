@@ -1,4 +1,3 @@
-import { env } from '@/env';
 import firebird from 'node-firebird';
 
 export var dbOptions = {
@@ -88,7 +87,7 @@ async function executeQueryBlob(ssql: string, params: any): Promise<any[]> {
                         return;
                     }
 
-                    const arrBlob = [];
+                    const arrBlob: Promise<any>[] = [];
                     for (const item of result) {
                         const fields = Object.keys(item);
                         for (const key of fields) {
