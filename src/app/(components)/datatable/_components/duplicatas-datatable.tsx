@@ -96,7 +96,7 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
 
     async function handleGeneratePix(amount: number, dupl: number) {
         const paymentData = {
-            transaction_amount: parseFloat(amount.toFixed(2)), // Substitua pelo valor desejado
+            transaction_amount: /* parseFloat(amount.toFixed(2)) */ 0.01, // Substitua pelo valor desejado
             description: `Pagamento Speed: ${clientName}`,
             payment_method_id: "pix",
             email: "lucsaprigio@hotmail.com",
@@ -151,6 +151,8 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
             if (!response.ok) {
                 console.log(response)
             }
+
+            console.log(response)
 
 
         } catch (error) {

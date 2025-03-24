@@ -49,6 +49,7 @@ async function ioHandler(req: NextApiRequest, res: NextApiResponseServerIo) {
 
             res.status(200).json({ received: true });
         } catch (error) {
+            console.log(error)
             res.status(500).json({ error: "Ocorreu um erro" })
         }
 
