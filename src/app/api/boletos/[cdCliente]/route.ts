@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ cdCliente
 
         if (!cdCliente) {
             return NextResponse.json({ error: 'Código do cliente inválido' }, { status: 404 });
-        }
+        } 
 
         const date = new Date();
         const dateFormatted = format(date, 'dd.MM.yyyy');
