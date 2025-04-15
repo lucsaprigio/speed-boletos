@@ -302,7 +302,7 @@ const columns = (clientName: string, cnpjValue: string): ColumnDef<Boletos>[] =>
             const amount = row.original.SP_PIX
 
             return (
-                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} cnpjValue={cnpjValue} showPixButton={days >= 5} />
+                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} cnpjValue={cnpjValue} showPixButton={days >= 1} />
             )
         },
     },

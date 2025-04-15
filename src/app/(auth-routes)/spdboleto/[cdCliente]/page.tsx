@@ -34,6 +34,7 @@ async function fetchBoletos(cdCliente: string) {
         if (error instanceof AppError) {
             throw error;
         } else {
+            console.log(error)
             throw new AppError(error.message, 500);
         }
     }
