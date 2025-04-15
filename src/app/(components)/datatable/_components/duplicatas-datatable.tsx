@@ -97,7 +97,7 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
     async function handleGeneratePix(amount: number, dupl: number) {
         const paymentData = {
             transaction_amount: parseFloat(amount.toFixed(2)),  // Substitua pelo valor desejado
-            description: `Pagamento Speed: ${clientName}`,
+            description: `Pagamento Speed: ${clientName} - ${dupl}`,
             payment_method_id: "pix",
             email: "lucsaprigio@hotmail.com",
             first_name: clientName
@@ -302,7 +302,7 @@ const columns = (clientName: string, cnpjValue: string): ColumnDef<Boletos>[] =>
             const amount = row.original.SP_PIX
 
             return (
-                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} cnpjValue={cnpjValue} showPixButton={days >= 5} />
+                <DropdownActions dupl={dupl} amount={amount} clientName={clientName} cnpjValue={cnpjValue} showPixButton={days >= 1} />
             )
         },
     },

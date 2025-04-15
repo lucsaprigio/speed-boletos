@@ -35,7 +35,11 @@ async function fetchBoletos(cdCliente: string) {
 	    console.log(error);
             throw error;
         } else {
+<<<<<<< HEAD
 	    console.log(error);
+=======
+            console.log(error)
+>>>>>>> refs/remotes/origin/master
             throw new AppError(error.message, 500);
         }
     }
