@@ -32,8 +32,10 @@ async function fetchBoletos(cdCliente: string) {
         return response.json();
     } catch (error) {
         if (error instanceof AppError) {
+	    console.log(error);
             throw error;
         } else {
+	    console.log(error);
             throw new AppError(error.message, 500);
         }
     }
