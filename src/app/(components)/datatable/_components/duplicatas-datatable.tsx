@@ -93,10 +93,10 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
     const idRef = useRef<string | null>(null);
     const router = useRouter();
 
-
     async function handleGeneratePix(amount: number, dupl: number) {
         const paymentData = {
             transaction_amount: parseFloat(amount.toFixed(2)),  // Substitua pelo valor desejado
+            // transaction_amount: 0.01,  // Substitua pelo valor desejado
             description: `Pagamento Speed: ${clientName} - ${dupl}`,
             payment_method_id: "pix",
             email: "lucsaprigio@hotmail.com",
