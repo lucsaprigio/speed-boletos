@@ -91,15 +91,16 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
     const amountRef = useRef<number | null>(null);
     const cnpjRef = useRef<string | null>(null);
     const idRef = useRef<string | null>(null);
+    const [paymentId, setPaymentId] = useState<string | null>(null);
     const router = useRouter();
 
     async function handleGeneratePix(amount: number, dupl: number) {
         const paymentData = {
-            transaction_amount: parseFloat(amount.toFixed(2)),  // Substitua pelo valor desejado
-            // transaction_amount: 0.01,  // Substitua pelo valor desejado
+            //transaction_amount: parseFloat(amount.toFixed(2)),  // Substitua pelo valor desejado
+            transaction_amount: 0.01,  // Substitua pelo valor desejado
             description: `Pagamento Speed: ${clientName} - ${dupl}`,
             payment_method_id: "pix",
-            email: "lucsaprigio@hotmail.com",
+            email: "lucas.speedautomac@gmail.com",
             first_name: clientName
         };
 
@@ -119,9 +120,10 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
             const result = await response.json();
 
             if (response.ok) {
+                setPaymentId(result.url.id);
+
                 const ticketWindow = window.open(result.url.ticket_url, '_blank');
                 ticketWindowRef.current = ticketWindow;
-                idRef.current = result.url.id;
             } else {
                 console.error('Erro ao criar pagamento:', result.error);
             }
@@ -152,9 +154,6 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
                 console.log(response)
             }
 
-            console.log(response)
-
-
         } catch (error) {
             toast({
                 title: 'Ocorreu um erro!',
@@ -179,13 +178,14 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
             handlePaymentUpdated();
         };
 
-        socket.on(`payment.updated`, handleUpdate);
+        // socket.on(`payment.updated`, handleUpdate);
+        socket.on(`payment.${paymentId}.updated`, handleUpdate);
 
         return () => {
             socket.off(`payment.updated`);
             socket.off('disconnect');
         };
-    }, []);
+    }, [paymentId]);
 
 
     return (

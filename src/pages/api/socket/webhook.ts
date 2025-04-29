@@ -38,13 +38,13 @@ async function ioHandler(req: NextApiRequest, res: NextApiResponseServerIo) {
             const io = res.socket.server.io;
 
             if (event.action === 'payment.created') {
-                // console.log(`📤 Emitindo evento: payment.${event.data.id}.created`);
+                console.log(`📤 Emitindo evento: payment.${event.data.id}.created`);
                 io.emit(`payment.created`);
             }
 
             if (event.action === 'payment.updated') {
-                // console.log(`📤 Emitindo evento: payment.${event.data.id}.updated`);
-                io.emit(`payment.updated`);
+                console.log(`📤 Emitindo evento: payment.${event.data.id}.updated`);
+                io.emit(`payment.${event.data.id}.updated`);
             }
 
             res.status(200).json({ received: true });
