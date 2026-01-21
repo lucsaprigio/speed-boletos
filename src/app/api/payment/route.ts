@@ -8,6 +8,16 @@ const client = new MercadoPagoConfig({
     options: { timeout: 5000 }
 });
 
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.CORS_URL as string, // Em produção, troque '*' pelo seu domínio exato
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS() {
+    return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function POST(req: Request) {
     const body = await req.json();
 
