@@ -101,7 +101,10 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
             description: `Pagamento Speed: ${clientName} - ${dupl}`,
             payment_method_id: "pix",
             email: "lucas.speedautomac@gmail.com",
-            first_name: clientName
+            first_name: clientName,
+            last_name: "",
+            identification_type: "CNPJ",
+            identification_number: cnpjValue
         };
 
         cnpjRef.current = cnpjValue

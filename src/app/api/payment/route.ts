@@ -29,7 +29,10 @@ export async function POST(req: Request) {
         transaction_amount,
         description,
         email,
-        first_name
+        first_name,
+        last_name,
+        identification_type,
+        identification_number
     } = body
 
     // Verifico se o valor está vindo na requisição
@@ -52,7 +55,13 @@ export async function POST(req: Request) {
                 }
             },
             payer: {
-                email
+                email,
+                first_name,
+                last_name,
+                identification: {
+                    type: identification_type,
+                    number: identification_number
+                }
             }
         },
         requestOptions: {

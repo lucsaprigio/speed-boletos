@@ -5,13 +5,19 @@ export type PaymentRequest = {
         payment_method_id: string;
         notification_url?: string;
         date_of_expiration?: string;
-        additional_info: {
-            payer: {
-                first_name: string;
+        additional_info?: {
+            payer?: {
+                first_name?: string;
             }
         }
         payer: {
             email: string;
+            first_name: string;
+            last_name: string;
+            identification: {
+                type: string;
+                number: string;
+            }
         }
     },
     requestOptions?: {
