@@ -107,8 +107,6 @@ const DropdownActions = ({ dupl, amount, clientName, cnpjValue, showPixButton })
             identification_number: cnpjValue
         };
 
-        console.log(paymentData)
-
         cnpjRef.current = cnpjValue
         amountRef.current = amount
         duplSaveRef.current = dupl;
